@@ -69,7 +69,7 @@ class LoginPage extends StatelessWidget {
                     Row(
                       children: [
                         const Text(
-                          "¿No tienes cuenta?",
+                          "¿No tienes una cuenta?",
                           style: TextStyle(
                             decoration: TextDecoration.underline,
                             color: Colors.white60,

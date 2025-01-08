@@ -63,7 +63,7 @@ class RegisterPage extends StatelessWidget {
             _textFieldPhone(),
             _textFieldPassword(),
             _textFieldConfirmPassword(),
-            _buttonRegister(),
+            _buttonRegister(context),
           ],
         ),
       ),
@@ -248,7 +248,7 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  Widget _buttonRegister() {
+  Widget _buttonRegister(BuildContext context) {
     return Container(
       width: 250,
       height: 50,
@@ -257,7 +257,7 @@ class RegisterPage extends StatelessWidget {
       ),
       child: FilledButton(
         onPressed: () {
-          return con.registrar();
+          return con.registrar(context);
         },
         child: Text('Registrarse'),
         style: ButtonStyle(

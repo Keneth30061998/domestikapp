@@ -2,10 +2,14 @@ import 'package:domestik_app/src/providers/users_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
+import 'package:domestik_app/src/models/user.dart';
 import '../../models/response_api.dart';
 
 class LoginController extends GetxController {
+
+  //Importante para usar al USER
+  User user = User.fromJson(GetStorage().read('user')??{});
+
   //**Capturar valores de los campos que ingrese el usuario */
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -36,8 +40,16 @@ class LoginController extends GetxController {
         Get.snackbar('Login Exitoso', 'Ingresando a la cuenta...');
 
         GetStorage().write('user', responseApi.data); //Para almacenar la data devuelta
+        User myUser = User.fromJson(GetStorage().read('user')??{});
+        print('Roles Length: ${myUser.roles!.length}');
+        if(myUser.roles!.length > 1){
+          goToRolesPage();
+        }else{
+          goToClientServicesPage();
+        }
 
-        goToHomePage();
+        //goToHomePage();
+
 
       }else{
         Get.snackbar('Login Fallido', responseApi.message ?? '');//otra forma de enviar el mensaje
@@ -47,8 +59,11 @@ class LoginController extends GetxController {
   }
 
   /** Funcion para movernos a Home*/
-  void goToHomePage(){
-    Get.toNamed('/home');
+  void goToClientServicesPage(){
+    Get.toNamed('/client/services/list');
+  }
+  void goToRolesPage(){
+    Get.offNamedUntil('/roles', (route)=>false);
   }
 
   /**Funcion de validacion */

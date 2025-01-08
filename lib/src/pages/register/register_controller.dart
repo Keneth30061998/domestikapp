@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:domestik_app/src/models/response_api.dart';
 import 'package:domestik_app/src/models/user.dart';
 import 'package:domestik_app/src/providers/users_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
 
 class RegisterController extends GetxController {
   TextEditingController emailController = TextEditingController();
@@ -25,7 +27,7 @@ class RegisterController extends GetxController {
   File? imageFile;
 
   /**Metodo que permite el registro */
-  void registrar() async {
+  void registrar(BuildContext context) async {
     String email = emailController.text.trim();
     String name = nameController.text;
     String lastname = lastnameController.text;
@@ -35,6 +37,11 @@ class RegisterController extends GetxController {
 
     /**llamado al metodo de validacion */
     if (isValidForm(email, name, lastname, phone, password, confirmPassword)) {
+
+      //Para añadir un progressDialog
+      ProgressDialog  progressDialog = ProgressDialog(context: context);
+      progressDialog.show(max: 75,msg: "Registrando Datos...");
+
       //Para realizar el resgistro
       User user = User(
         email: email,
@@ -44,14 +51,34 @@ class RegisterController extends GetxController {
         password: password,
       );
 
-      Response response = await usersProvider.create(user);
-      print('Response: ${response.body}');
+      //Response response = await usersProvider.create(client);
+      //print('Response: ${response.body}');
 
-      Get.snackbar('Datos Válidos', 'Registro de usuario...');
-      print('Email: ${email}');
-      print('Nombre: ${name}');
+      //Get.snackbar('Datos Válidos', 'Registro de usuario...');
+      //print('Email: ${email}');
+      //print('Nombre: ${name}');
       //print('Password: ${password}');
+
+      Stream stream = await usersProvider.createWithImage(user, imageFile!);
+      stream.listen((res){
+
+        progressDialog.close();
+
+        ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
+
+        if(responseApi.success==true){
+          GetStorage().write('user', responseApi.data);
+          goToHomePage();
+        }else{
+          Get.snackbar('Registro fallido', responseApi.message ?? '');
+        }
+      });
     }
+  }
+
+  /** Método para navegar al home despues del registro */
+  void goToHomePage(){
+    Get.offNamedUntil('/client/services/list', (route)=>false);
   }
 
   /**Metodo de validacion para los textEdit */
@@ -109,6 +136,11 @@ class RegisterController extends GetxController {
     if (password != confirmPassword) {
       Get.snackbar('Contraseñas no coinciden',
           'Revise las contraseñas e intente de nuevo');
+      return false;
+    }
+
+    if(imageFile==null){
+      Get.snackbar('Formulario no válido', "Debe registrar una imágen");
       return false;
     }
 
