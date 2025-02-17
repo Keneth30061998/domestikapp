@@ -32,8 +32,8 @@ class LoginController extends GetxController {
       //** Mensajes guias : impresion de respuesta de la Api + Validaciones + Campos(email - password)*/
       print('Response Api: ${responseApi.toJson()}');
       Get.snackbar('Datos Válidos', 'Inicio de sesion...');
-      print('Email: ${email}');
-      print('Password: ${password}');
+      print('Email: $email');
+      print('Password: $password');
 
       //validaciones
       if(responseApi.success == true){
@@ -58,7 +58,7 @@ class LoginController extends GetxController {
     }
   }
 
-  /** Funcion para movernos a Home*/
+  /// Funcion para movernos a Home
   void goToClientServicesPage(){
     Get.toNamed('/client/services/list');
   }
@@ -66,7 +66,7 @@ class LoginController extends GetxController {
     Get.offNamedUntil('/roles', (route)=>false);
   }
 
-  /**Funcion de validacion */
+  /// Funcion de validacion
   bool isValidForm(String email, String password) {
     if (!GetUtils.isEmail(email)) {
       Get.snackbar('Email Incorecto', 'Ingrese un email válido');

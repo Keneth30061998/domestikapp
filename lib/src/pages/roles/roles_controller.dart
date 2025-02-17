@@ -5,7 +5,7 @@ import '../../models/rol.dart';
 import '../../models/user.dart';
 
 class RolesController extends GetxController{
-  User user = User.fromJson(GetStorage().read('client')??{});
+  User user = User.fromJson(GetStorage().read('user')??{});
   
   void goToPageRol(Rol rol){
     Get.offNamedUntil(rol.route ?? '', (route)=>false);

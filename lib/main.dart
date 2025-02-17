@@ -1,4 +1,6 @@
 import 'package:domestik_app/src/models/user.dart';
+import 'package:domestik_app/src/pages/client/profile/info/client_profile_info_page.dart';
+import 'package:domestik_app/src/pages/client/profile/update/client_profile_update_page.dart';
 import 'package:domestik_app/src/pages/client/services/list/client_services_list_page.dart';
 import 'package:domestik_app/src/pages/home/home_page.dart';
 import 'package:domestik_app/src/pages/login/login_page.dart';
@@ -11,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-User userSession = User.fromJson(GetStorage().read('client') ?? {});
+User userSession = User.fromJson(GetStorage().read('user') ?? {});
 
 void main() async{
   //Para poder almacenar el incio de sesion usamos GetStorage, modificamos un poco el main
@@ -61,6 +63,8 @@ class _MyAppState extends State<MyApp> {
         GetPage(name: '/premises/orders/list', page: ()=>PremisesOrdersListPage()),
         GetPage(name: '/worker/orders/list', page: ()=>WorkerOrdersListPage()),
         GetPage(name: '/client/services/list', page: ()=>ClientServicesListPage()),
+        GetPage(name: '/client/profile/info', page: ()=>ClientProfileInfoPage()),
+        GetPage(name: '/client/profile/update', page: ()=>ClientProfileUpdatePage()),
       ],
     );
   }

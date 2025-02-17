@@ -26,7 +26,7 @@ class RegisterController extends GetxController {
   ImagePicker picker = ImagePicker();
   File? imageFile;
 
-  /**Metodo que permite el registro */
+  /// Metodo que permite el registro
   void registrar(BuildContext context) async {
     String email = emailController.text.trim();
     String name = nameController.text;
@@ -76,12 +76,12 @@ class RegisterController extends GetxController {
     }
   }
 
-  /** Método para navegar al home despues del registro */
+  /// Método para navegar al home despues del registro
   void goToHomePage(){
     Get.offNamedUntil('/client/services/list', (route)=>false);
   }
 
-  /**Metodo de validacion para los textEdit */
+  /// Metodo de validacion para los textEdit
   bool isValidForm(
     String email,
     String name,
