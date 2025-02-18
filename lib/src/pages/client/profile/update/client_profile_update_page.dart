@@ -39,7 +39,7 @@ class ClientProfileUpdatePage extends StatelessWidget {
 
   Widget _boxForm(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.60,
+      height: MediaQuery.of(context).size.height * 0.64,
       padding: const EdgeInsets.only(bottom: 20, top: 10),
       margin: EdgeInsets.only(
           top: MediaQuery.of(context).size.height * 0.16, left: 30, right: 30),

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:domestik_app/src/models/user.dart';
 import 'package:get/get.dart';
 import 'package:domestik_app/src/environment/environment.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../models/response_api.dart';
 
@@ -12,6 +13,9 @@ import 'package:path/path.dart';
 
 class UsersProvider extends GetConnect {
   String url = '${Environment.API_URL}api/users';
+
+  //Para implementar el session token
+  User userSession = User.fromJson(GetStorage().read('user') ?? {});
 
   Future<Response> create(User user) async {
     Response response = await post(
@@ -27,42 +31,48 @@ class UsersProvider extends GetConnect {
     Response response = await put(
       '$url/updateWithoutImage',
       user.toJson(),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': userSession.sessionToken ?? ''
+        },
     ); //ESPERAR HATA QUE EL SERVIDOR NOS RETORNE LA RESPUESTA
 
-    if(response.body == null){
+    if (response.body == null) {
       Get.snackbar('Error', 'Error al actualizar los datos');
       return ResponseApi();
     }
+
+    if (response.statusCode == 401) {
+      Get.snackbar('Error', 'Usuario no autorizado a esta peticion');
+      return ResponseApi();
+    }
+
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
     return responseApi;
   }
 
   //Provide para actualizar datos del usuario - con imagen
-  Future<Stream> updateWithImage(User user, File image)async {
+  Future<Stream> updateWithImage(User user, File image) async {
     Uri uri = Uri.http(Environment.API_URL_OLD, '/api/users/update');
     final request = http.MultipartRequest('PUT', uri);
+
+    //Agregamos headers e el objeto request para añadir el session Token
+    request.headers['Authorization'] = userSession.sessionToken ?? '';
+
     request.files.add(http.MultipartFile(
-        'image',
-        http.ByteStream(image.openRead().cast()),
-        await image.length(),
-        filename: basename(image.path)
-    ));
+        'image', http.ByteStream(image.openRead().cast()), await image.length(),
+        filename: basename(image.path)));
     request.fields['user'] = json.encode(user);
     final response = await request.send();
     return response.stream.transform(utf8.decoder);
   }
 
-
-  Future<Stream> createWithImage(User user, File image)async {
+  Future<Stream> createWithImage(User user, File image) async {
     Uri uri = Uri.http(Environment.API_URL_OLD, 'api/users/createWithImage');
     final request = http.MultipartRequest('POST', uri);
     request.files.add(http.MultipartFile(
-      'image',
-      http.ByteStream(image.openRead().cast()),
-      await image.length(),
-      filename: basename(image.path)
-    ));
+        'image', http.ByteStream(image.openRead().cast()), await image.length(),
+        filename: basename(image.path)));
     request.fields['user'] = json.encode(user);
     final response = await request.send();
     return response.stream.transform(utf8.decoder);
@@ -71,14 +81,11 @@ class UsersProvider extends GetConnect {
   Future<ResponseApi> login(String email, String password) async {
     Response response = await post(
       '$url/login',
-      {
-        'email': email,
-        'password': password
-      },
+      {'email': email, 'password': password},
       headers: {'Content-Type': 'application/json'},
     ); //ESPERAR HATA QUE EL SERVIDOR NOS RETORNE LA RESPUESTA
 
-    if(response.body == null){
+    if (response.body == null) {
       Get.snackbar('Error', 'No se puede ejecutar la petición');
       return ResponseApi();
     }
