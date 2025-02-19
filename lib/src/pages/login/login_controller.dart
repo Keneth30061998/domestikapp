@@ -6,27 +6,26 @@ import 'package:domestik_app/src/models/user.dart';
 import '../../models/response_api.dart';
 
 class LoginController extends GetxController {
-
   //Importante para usar al USER
-  User user = User.fromJson(GetStorage().read('user')??{});
+  User user = User.fromJson(GetStorage().read('user') ?? {});
 
   //**Capturar valores de los campos que ingrese el usuario */
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  UsersProvider usersProvider = UsersProvider(); //Necesario para obtener las funciones del provider
+  UsersProvider usersProvider =
+      UsersProvider(); //Necesario para obtener las funciones del provider
 
   void goToRegisterPage() {
     Get.toNamed('/register');
   }
 
   //**Metodo Login que permita verificar si el usuario esta registrado */
-  void Login() async{
+  void Login() async {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
     if (isValidForm(email, password)) {
-
       ResponseApi responseApi = await usersProvider.login(email, password);
 
       //** Mensajes guias : impresion de respuesta de la Api + Validaciones + Campos(email - password)*/
@@ -36,34 +35,34 @@ class LoginController extends GetxController {
       print('Password: $password');
 
       //validaciones
-      if(responseApi.success == true){
+      if (responseApi.success == true) {
         Get.snackbar('Login Exitoso', 'Ingresando a la cuenta...');
 
-        GetStorage().write('user', responseApi.data); //Para almacenar la data devuelta
-        User myUser = User.fromJson(GetStorage().read('user')??{});
+        GetStorage()
+            .write('user', responseApi.data); //Para almacenar la data devuelta
+        User myUser = User.fromJson(GetStorage().read('user') ?? {});
         print('Roles Length: ${myUser.roles!.length}');
-        if(myUser.roles!.length > 1){
+        if (myUser.roles!.length > 1) {
           goToRolesPage();
-        }else{
-          goToClientServicesPage();
+        } else {
+          goToClientHomePage();
         }
 
         //goToHomePage();
-
-
-      }else{
-        Get.snackbar('Login Fallido', responseApi.message ?? '');//otra forma de enviar el mensaje
+      } else {
+        Get.snackbar('Login Fallido',
+            responseApi.message ?? ''); //otra forma de enviar el mensaje
       }
-
     }
   }
 
   /// Funcion para movernos a Home
-  void goToClientServicesPage(){
-    Get.toNamed('/client/services/list');
+  void goToClientHomePage() {
+    Get.toNamed('/client/home');
   }
-  void goToRolesPage(){
-    Get.offNamedUntil('/roles', (route)=>false);
+
+  void goToRolesPage() {
+    Get.offNamedUntil('/roles', (route) => false);
   }
 
   /// Funcion de validacion

@@ -9,83 +9,10 @@ class ClientServicesListPage extends StatelessWidget {
   ClientServicesListController con = Get.put(ClientServicesListController());
 
   Widget build(BuildContext context) {
-    /// Lista de páginas para el `PageView`
-    final List<Widget> pages = [
-      Center(
-          child: Text('Página 2: Favoritos', style: TextStyle(fontSize: 20))),
-      Center(
-          child:
-              Text('Página 3: Configuración', style: TextStyle(fontSize: 20))),
-      ClientProfileInfoPage(),
-    ];
-
-    return Scaffold(
-      body: PageView(
-        controller: con.pageController,
-        physics:
-            const NeverScrollableScrollPhysics(), // Desactiva el deslizamiento manual
-        children: pages,
-      ),
-      bottomNavigationBar: AnimatedNotchBottomBar(
-        bottomBarHeight: 80,
-        notchBottomBarController: con.bottomBarController,
-        color: color_primary,
-        notchColor: color_notch,
-        showLabel: true,
-        itemLabelStyle: const TextStyle(fontSize: 12),
-        bottomBarItems: const [
-          BottomBarItem(
-            inActiveItem: Icon(
-              Icons.list,
-              color: Colors.white,
-              size: 28,
-            ),
-            activeItem: Icon(
-              Icons.list,
-              color: Colors.white,
-              size: 26,
-            ),
-            itemLabelWidget: Text(
-              'Servicio',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          BottomBarItem(
-            inActiveItem: Icon(
-              Icons.favorite,
-              color: Colors.white,
-              size: 28,
-            ),
-            activeItem: Icon(
-              Icons.favorite,
-              color: Colors.white,
-              size: 26,
-            ),
-            itemLabelWidget: Text(
-              'Servicio',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          BottomBarItem(
-            inActiveItem: Icon(
-              Icons.person,
-              color: Colors.white,
-              size: 28,
-            ),
-            activeItem: Icon(
-              Icons.person,
-              color: Colors.white,
-              size: 26,
-            ),
-            itemLabelWidget: Text(
-              'Profile',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-        onTap: con.onBottomBarTap,
-        kIconSize: 28.0,
-        kBottomRadius: 28,
+    
+    return const Scaffold(
+      body: Center(
+        child: Text('Client Services List'),
       ),
     );
   }
