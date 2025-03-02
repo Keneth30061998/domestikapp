@@ -21,4 +21,21 @@ class CategoriesProvider extends GetConnect {
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
     return responseApi;
   }
+
+  //Para Listar las caregorias
+  Future<List<Category>> getAll() async {
+    Response response = await get('$url/getAll', headers: {
+      'Content-Type': 'aplication/json',
+      'Authorization': userSession.sessionToken ?? ''
+    });
+
+    //Validacion en caso de haber conflicto
+    if (response.status == 401) {
+      Get.snackbar('Peticion Denegada',
+          'Usuario sin permisos para leer esta informacion');
+      return [];
+    }
+    List<Category> categories = Category.fromJsonList(response.body);
+    return categories;
+  }
 }

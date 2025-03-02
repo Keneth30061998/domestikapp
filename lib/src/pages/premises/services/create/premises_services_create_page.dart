@@ -1,21 +1,27 @@
-import 'package:domestik_app/src/pages/premises/categories/create/premises_categories_create_controller.dart';
+import 'dart:io';
+
+import 'package:domestik_app/src/models/category.dart';
+import 'package:domestik_app/src/pages/premises/services/create/premises_services_create_controller.dart';
+import 'package:domestik_app/src/pages/register/register_controller.dart';
 import 'package:domestik_app/src/utils/color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class PremisesCategoriesCreatePage extends StatelessWidget {
-  //controladores
-  PremisesCategoriesCreateController con =
-      Get.put(PremisesCategoriesCreateController());
+class PremisesServicesCreatePage extends StatelessWidget {
+  PremisesServicesCreateController con =
+      Get.put(PremisesServicesCreateController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          _backgroundCover(context),
-          _boxForm(context),
-        ],
+      body: Obx(
+        () => Stack(
+          children: [
+            _backgroundCover(context),
+            _boxForm(context),
+          ],
+        ),
       ),
     );
   }
@@ -25,7 +31,7 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
   Widget _backgroundCover(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.33,
+      height: MediaQuery.of(context).size.height * 0.40,
       decoration: BoxDecoration(
         color: color_primary,
         borderRadius: const BorderRadius.only(
@@ -40,10 +46,10 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
 
   Widget _boxForm(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.55,
+      height: MediaQuery.of(context).size.height * 0.65,
       padding: const EdgeInsets.only(bottom: 20, top: 10),
       margin: EdgeInsets.only(
-          top: MediaQuery.of(context).size.height * 0.20, left: 30, right: 30),
+          top: MediaQuery.of(context).size.height * 0.15, left: 30, right: 30),
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: background_form,
@@ -60,7 +66,26 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
             _textTitle(),
             _textSubtitle(),
             _textFieldName(),
+            _textFieldPrice(),
             _textFieldDescription(),
+            _dropDownCategories(con.categories),
+            Container(
+              margin: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GetBuilder<PremisesServicesCreateController>(
+                      builder: (value) =>
+                          _cardImage(con.imageFile1, 1, context)),
+                  GetBuilder<PremisesServicesCreateController>(
+                      builder: (value) =>
+                          _cardImage(con.imageFile2, 2, context)),
+                  GetBuilder<PremisesServicesCreateController>(
+                      builder: (value) =>
+                          _cardImage(con.imageFile3, 3, context)),
+                ],
+              ),
+            ),
             _buttonCreate(context),
           ],
         ),
@@ -78,7 +103,7 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "Crear nueva categoría",
+            "Registro de servicio",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25,
@@ -89,8 +114,8 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
             height: 10,
           ),
           const Icon(
-            Icons.list_alt,
-            size: 70,
+            Icons.interests,
+            size: 90,
           )
         ],
       ),
@@ -132,6 +157,31 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
     );
   }
 
+  Widget _textFieldPrice() {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: 40,
+        vertical: 10,
+      ),
+      child: TextField(
+        controller: con.priceController,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+            floatingLabelStyle: TextStyle(color: color_secondary),
+            labelText: 'Precio',
+            hintText: 'Precio',
+            prefixIcon: Icon(Icons.monetization_on),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: color_secondary),
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(color: color_secondary))),
+      ),
+    );
+  }
+
   Widget _textFieldDescription() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
@@ -167,7 +217,7 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
       ),
       child: FilledButton.tonalIcon(
         onPressed: () {
-          con.createCategory();
+          con.createService(context);
         },
         label: Text('Crear'),
         style: ButtonStyle(
@@ -179,6 +229,69 @@ class PremisesCategoriesCreatePage extends StatelessWidget {
           Icons.save,
           color: Colors.white,
         ),
+      ),
+    );
+  }
+
+  Widget _cardImage(File? imageFile, int numberFile, BuildContext context) {
+    return GestureDetector(
+      onTap: () => con.showAlertDialog(context, numberFile),
+      child: Card(
+        elevation: 2,
+        child: Container(
+            color: Colors.transparent,
+            height: 100,
+            width: MediaQuery.of(context).size.width * 0.25,
+            padding: EdgeInsets.all(3),
+            child: imageFile != null
+                ? Image.file(
+                    imageFile,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset('assets/img/subir.png')),
+      ),
+    );
+  }
+
+  //Para Listar categorias
+  List<DropdownMenuItem<String?>> _dropDownItems(List<Category> categories) {
+    List<DropdownMenuItem<String>> list = [];
+    categories.forEach((category) {
+      list.add(DropdownMenuItem(
+        child: Text(category.name ?? ''),
+        value: category.id,
+      ));
+    });
+    return list;
+  }
+
+  //Widget para listar
+  Widget _dropDownCategories(List<Category> categories) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 55),
+      child: DropdownButton(
+        underline: Container(
+          alignment: Alignment.centerRight,
+          child: Icon(
+            Icons.arrow_drop_down_circle,
+            color: color_primary,
+          ),
+        ),
+        elevation: 2,
+        isExpanded: true,
+        hint: Text(
+          'Categoria',
+          style: TextStyle(
+            color: color_primary,
+            fontSize: 16,
+          ),
+        ),
+        items: _dropDownItems(categories),
+        value: con.idCategory.value == '' ? null : con.idCategory.value,
+        onChanged: (option) {
+          print('Opcion seleccionada ${option}');
+          con.idCategory.value = option.toString();
+        },
       ),
     );
   }
