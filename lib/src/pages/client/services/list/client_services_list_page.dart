@@ -5,14 +5,36 @@ import 'package:domestik_app/src/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../models/category.dart';
+
 class ClientServicesListPage extends StatelessWidget {
   ClientServicesListController con = Get.put(ClientServicesListController());
 
   Widget build(BuildContext context) {
-    
-    return const Scaffold(
-      body: Center(
-        child: Text('Client Services List'),
+    return DefaultTabController(
+      length: con.categories.length,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(75),
+          child: AppBar(
+            bottom: TabBar(
+              indicatorColor: color_primary,
+              labelColor: color_primary,
+              unselectedLabelColor: Colors.grey[400],
+              tabs: List<Widget>.generate(con.categories.length, (index) {
+                return Tab(
+                  child: Text(con.categories[index].name ?? ''),
+                );
+              }),
+              isScrollable: true,
+            ),
+          ),
+        ),
+        body: TabBarView(
+          children: con.categories.map((Category category) {
+            return Container();
+          }).toList(),
+        ),
       ),
     );
   }

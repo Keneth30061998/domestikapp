@@ -71,19 +71,22 @@ class PremisesServicesCreatePage extends StatelessWidget {
             _dropDownCategories(con.categories),
             Container(
               margin: EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GetBuilder<PremisesServicesCreateController>(
-                      builder: (value) =>
-                          _cardImage(con.imageFile1, 1, context)),
-                  GetBuilder<PremisesServicesCreateController>(
-                      builder: (value) =>
-                          _cardImage(con.imageFile2, 2, context)),
-                  GetBuilder<PremisesServicesCreateController>(
-                      builder: (value) =>
-                          _cardImage(con.imageFile3, 3, context)),
-                ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GetBuilder<PremisesServicesCreateController>(
+                        builder: (value) =>
+                            _cardImage(con.imageFile1, 1, context)),
+                    GetBuilder<PremisesServicesCreateController>(
+                        builder: (value) =>
+                            _cardImage(con.imageFile2, 2, context)),
+                    GetBuilder<PremisesServicesCreateController>(
+                        builder: (value) =>
+                            _cardImage(con.imageFile3, 3, context)),
+                  ],
+                ),
               ),
             ),
             _buttonCreate(context),
